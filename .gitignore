@@ -1,0 +1,20 @@
+# Dependencies
+/node_modules
+
+# Build output
+/main.js
+
+# Generated files
+/versions.json
+/package-lock.json
+
+# Cache
+/block-cache.json
+
+# IDE / System files
+.vscode/
+.DS_Store
+
+# User-specific files
+/让obsidian能解析兼容logseq的块引用-需求文档.md
+/obsidian-developer-docs-main/
