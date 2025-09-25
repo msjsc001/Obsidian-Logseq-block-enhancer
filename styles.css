@@ -1,34 +1,23 @@
-/* Style for embedded block references */
-.logseq-embed {
-    display: block;
-    padding: 10px;
-    border-left: 3px solid var(--text-accent);
+.logseq-block-embed, .logseq-block-ref-enhancer-widget {
+    border: 1px solid var(--background-modifier-border);
     background-color: var(--background-secondary);
-    border-radius: 4px;
-    margin: 1em 0;
+    padding: 0.5em 1em;
+    margin: 0.5em 0;
+    border-radius: var(--radius-m);
 }
 
-/* Style for inline block references */
-.logseq-reference {
-    border-bottom: 1px dotted var(--text-faint);
+/*
+ * 最终修复: 覆盖主题或核心样式中可能存在的 :before/:after 伪元素。
+ * 某些主题会给通用的 widget 或 embed 块添加图标或“把手”，
+ * 这会导致显示一个损坏的图片。我们用 `content: none !important;`
+ * 强制移除它们，确保我们的组件内部纯净。
+*/
+.logseq-block-ref-enhancer-widget::before,
+.logseq-block-ref-enhancer-widget::after {
+    content: none !important;
 }
 
-/* Style for children blocks to create indentation */
-.logseq-children {
-    margin-left: 20px;
-    padding-left: 10px;
-    border-left: 1px solid var(--background-modifier-border);
-}
-
-.logseq-child {
-    margin-top: 5px;
-}
-
-/* Style for block references that could not be found */
-.logseq-error {
+.logseq-block-ref-enhancer-error {
     color: var(--text-error);
-    background-color: var(--background-primary-alt);
-    padding: 2px 5px;
-    border-radius: 4px;
     font-family: var(--font-monospace);
 }

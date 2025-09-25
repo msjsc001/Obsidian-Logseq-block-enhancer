@@ -40,8 +40,11 @@ const buildOptions = {
 	outfile: "main.js",
 };
 
-if (!prod) {
-	buildOptions.watch = true;
+if (prod) {
+    esbuild.build(buildOptions).catch(() => process.exit(1));
+} else {
+    esbuild.context(buildOptions).then(ctx => {
+        ctx.watch();
+        console.log("Watching for changes...");
+    }).catch(() => process.exit(1));
 }
-
-esbuild.build(buildOptions).catch(() => process.exit(1));

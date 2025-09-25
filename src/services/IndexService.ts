@@ -40,6 +40,7 @@ export class IndexService {
         } catch (error) {
             console.error("Error saving index to cache:", error);
         }
+        console.log(`%c[IndexService] INITIALIZED. Index size: ${this.index.size}`, 'background: #222; color: #bada55');
     }
 
     private async loadIndexFromCache(): Promise<boolean> {
@@ -114,6 +115,7 @@ export class IndexService {
     }
     
     public getBlock(id: string): BlockCache | undefined {
+        console.log(`[IndexService] GET_BLOCK called for ID: ${id}. Current index size: ${this.index.size}`);
         return this.index.get(id);
     }
 
