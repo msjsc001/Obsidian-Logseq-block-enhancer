@@ -13,11 +13,42 @@
  * 强制移除它们，确保我们的组件内部纯净。
 */
 .logseq-block-ref-enhancer-widget::before,
-.logseq-block-ref-enhancer-widget::after {
+.logseq-block-ref-enhancer-widget::after,
+.logseq-block-embed::before,
+.logseq-block-embed::after {
     content: none !important;
 }
 
 .logseq-block-ref-enhancer-error {
     color: var(--text-error);
     font-family: var(--font-monospace);
+}
+
+/* Live Preview 排版基线适配：在编辑器上下文中让块与阅读模式一致 */
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed {
+    font-family: var(--font-text);
+    white-space: normal;
+
+    /* 关键修复：避免列表项中出现“单独的圆点行” */
+    /* 在编辑器行内渲染为占满行宽的内联块，移除上下外边距以防断行 */
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0.5em 0;        /* 与阅读模式保持一致的上下间距 */
+    vertical-align: top;    /* 与列表标记顶部对齐 */
+}
+/* Live Preview: 统一内部段落/列表的上下间距，使其贴近阅读模式 */
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered > :first-child {
+  margin-top: 0;
+}
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered > :last-child {
+  margin-bottom: 0;
+}
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered p,
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered ul,
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered ol,
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered pre,
+.markdown-source-view.mod-cm6 .cm-content .logseq-block-embed.markdown-rendered blockquote {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }

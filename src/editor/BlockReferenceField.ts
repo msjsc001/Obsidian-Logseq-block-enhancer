@@ -5,10 +5,10 @@ import { BlockReferenceWidget } from "./BlockReferenceWidget";
 // --- 消息定义 (StateEffects) ---
 
 // 消息1: 请求在某个位置添加一个“加载中”状态的 Widget
-export const addLoadingWidgetEffect = StateEffect.define<{ pos: number, uuid: string }>();
+export const addLoadingWidgetEffect = StateEffect.define<{ from: number, to: number, uuid: string }>();
 
 // 消息2: 请求将某个位置的 Widget 更新为“已渲染”状态，并提供 HTML 内容
-export const setRenderedWidgetEffect = StateEffect.define<{ pos: number, html: string }>();
+export const setRenderedWidgetEffect = StateEffect.define<{ from: number, to: number, html: string }>();
 
 // --- 状态容器 (StateField) ---
 
@@ -26,22 +26,28 @@ export const blockReferenceField = StateField.define<DecorationSet>({
         // 然后，处理本交易中我们关心的所有消息
         for (const effect of tr.effects) {
             if (effect.is(addLoadingWidgetEffect)) {
-                const loadingWidget = Decoration.widget({
+                const { from, to } = effect.value;
+                // 使用 replace+widget 一体化装饰，直接以小部件替换占位文本，避免排序冲突
+                const loading = Decoration.replace({
                     widget: new BlockReferenceWidget("loading"),
-                    side: -1, // 确保光标可以在 widget 旁边
-                }).range(effect.value.pos);
-                widgets = widgets.update({ add: [loadingWidget] });
-            } 
-            else if (effect.is(setRenderedWidgetEffect)) {
-                const renderedWidget = Decoration.widget({
-                    widget: new BlockReferenceWidget("rendered", effect.value.html),
-                    side: -1,
-                }).range(effect.value.pos);
+                }).range(from, to);
 
-                // 关键：移除该位置的旧 widget，并添加新 widget
                 widgets = widgets.update({
-                    filter: (from) => from !== effect.value.pos,
-                    add: [renderedWidget],
+                    // 移除与此范围重叠的旧装饰，避免重复
+                    filter: (aFrom, aTo) => aTo <= from || aFrom >= to,
+                    add: [loading],
+                });
+            }
+            else if (effect.is(setRenderedWidgetEffect)) {
+                const { from, to, html } = effect.value;
+                const rendered = Decoration.replace({
+                    widget: new BlockReferenceWidget("rendered", html),
+                }).range(from, to);
+
+                // 关键：移除与此范围重叠的旧装饰，并添加新的 replace+widget
+                widgets = widgets.update({
+                    filter: (aFrom, aTo) => aTo <= from || aFrom >= to,
+                    add: [rendered],
                 });
             }
         }

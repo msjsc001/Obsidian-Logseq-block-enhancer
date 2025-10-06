@@ -16,7 +16,12 @@ export class BlockReferenceWidget extends WidgetType {
 
     toDOM(): HTMLElement {
         const container = document.createElement("div");
-        container.className = "logseq-block-ref-enhancer-widget";
+        container.className = "logseq-block-ref-enhancer-widget logseq-block-embed markdown-rendered";
+        // 保证在 Live Preview（尤其是列表项内）作为“内联容器”存在，
+        // 同时视觉上仍保持块级外观，避免出现单独的项目符号行
+        container.style.display = "inline-block";
+        container.style.maxWidth = "100%";
+        container.style.verticalAlign = "top";
 
         if (this.state === "loading") {
             container.setText("Loading..."); // 显示加载提示
